@@ -1,0 +1,1025 @@
+{
+	"info": {
+		"_postman_id": "c1a2b3c4-9999-4000-8000-postman000001",
+		"name": "Course Management System API",
+		"description": "Bộ sưu tập kiểm thử toàn diện cho hệ thống Course Management System (Spring Boot + MySQL + MinIO + JWT Security)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{accessToken}}",
+				"type": "string"
+			}
+		]
+	},
+	"item": [
+		{
+			"name": "1. Authentication (Xác thực & Phân quyền)",
+			"item": [
+				{
+					"name": "Login - Admin (Mặc định)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var data = pm.response.json();",
+									"    if (data.token) {",
+									"        pm.environment.set('accessToken', data.token);",
+									"        console.log('Đã tự động lưu Token của Admin vào {{accessToken}}');",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"admin\",\n    \"password\": \"123456\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						}
+					}
+				},
+				{
+					"name": "Login - Lecturer (Giảng viên)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var data = pm.response.json();",
+									"    if (data.token) {",
+									"        pm.environment.set('accessToken', data.token);",
+									"        console.log('Đã tự động lưu Token của Giảng viên vào {{accessToken}}');",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"lecturer\",\n    \"password\": \"123456\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						}
+					}
+				},
+				{
+					"name": "Login - Student (Sinh viên)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var data = pm.response.json();",
+									"    if (data.token) {",
+									"        pm.environment.set('accessToken', data.token);",
+									"        console.log('Đã tự động lưu Token của Sinh viên vào {{accessToken}}');",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"student\",\n    \"password\": \"123456\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						}
+					}
+				},
+				{
+					"name": "Register - Đăng ký tài khoản mới",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"sinhvien_moi\",\n    \"password\": \"123456\",\n    \"fullName\": \"Học Viên Mới\",\n    \"email\": \"hocvienmoi@example.com\",\n    \"role\": \"ROLE_STUDENT\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/register",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"register"
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Current User Profile (Cần Token)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/me",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"me"
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "2. Departments (Quản lý Khoa / Phòng ban)",
+			"item": [
+				{
+					"name": "Lấy danh sách tất cả Khoa",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/departments",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"departments"
+							]
+						}
+					}
+				},
+				{
+					"name": "Lấy chi tiết Khoa theo ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/departments/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"departments",
+								"1"
+							]
+						}
+					}
+				},
+				{
+					"name": "Tạo mới Khoa (Chỉ ADMIN)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"departmentCode\": \"AI_DEPT\",\n    \"departmentName\": \"Khoa Trí Tuệ Nhân Tạo Chuyên Sâu\",\n    \"description\": \"Chuyên nghiên cứu mô hình ngôn ngữ lớn và thị giác máy tính\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/departments",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"departments"
+							]
+						}
+					}
+				},
+				{
+					"name": "Cập nhật Khoa theo ID",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"departmentCode\": \"CNTT_01\",\n    \"departmentName\": \"Khoa Công Nghệ Thông Tin (Cập nhật)\",\n    \"description\": \"Khoa đầu ngành đào tạo Kỹ sư CNTT & Khoa học dữ liệu\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/departments/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"departments",
+								"1"
+							]
+						}
+					}
+				},
+				{
+					"name": "Tìm kiếm Khoa theo từ khóa",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/departments/search?keyword=Thông Tin",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"departments",
+								"search"
+							],
+							"query": [
+								{
+									"key": "keyword",
+									"value": "Thông Tin"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Đếm số lượng Khoa",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/departments/count",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"departments",
+								"count"
+							]
+						}
+					}
+				},
+				{
+					"name": "Xóa Khoa theo ID (Chỉ ADMIN)",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/departments/10",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"departments",
+								"10"
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "3. Classes (Quản lý Lớp học)",
+			"item": [
+				{
+					"name": "Lấy danh sách tất cả Lớp học",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/classes/list",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"classes",
+								"list"
+							]
+						}
+					}
+				},
+				{
+					"name": "Lấy chi tiết Lớp học theo ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/classes/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"classes",
+								"1"
+							]
+						}
+					}
+				},
+				{
+					"name": "Lọc Lớp học theo Khoa (Department ID)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/classes/department/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"classes",
+								"department",
+								"1"
+							]
+						}
+					}
+				},
+				{
+					"name": "Tạo Lớp học mới (ADMIN hoặc LECTURER)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"classCode\": \"24110911_CLOUD\",\n    \"className\": \"Lớp Điện Toán Đám Mây K24\",\n    \"room\": \"C2-305\",\n    \"description\": \"Lớp chuyên ngành DevOps & Cloud Computing\",\n    \"departmentId\": 1\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/classes/create",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"classes",
+								"create"
+							]
+						}
+					}
+				},
+				{
+					"name": "Cập nhật Lớp học theo ID",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"classCode\": \"24110901_CNTT\",\n    \"className\": \"Lớp Kỹ Thuật Phần Mềm K24 (Đổi phòng)\",\n    \"room\": \"A2-505\",\n    \"description\": \"Phòng thực hành máy tính cấu hình cao\",\n    \"departmentId\": 1\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/classes/update/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"classes",
+								"update",
+								"1"
+							]
+						}
+					}
+				},
+				{
+					"name": "Tìm kiếm Lớp học theo từ khóa",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/classes/search?keyword=Trí Tuệ",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"classes",
+								"search"
+							],
+							"query": [
+								{
+									"key": "keyword",
+									"value": "Trí Tuệ"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Đếm số lượng Lớp học",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/classes/count",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"classes",
+								"count"
+							]
+						}
+					}
+				},
+				{
+					"name": "Xóa Lớp học theo ID (Chỉ ADMIN)",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/classes/10",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"classes",
+								"10"
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "4. Courses (Quản lý Khóa học)",
+			"item": [
+				{
+					"name": "Lấy danh sách tất cả Khóa học",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/courses",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"courses"
+							]
+						}
+					}
+				},
+				{
+					"name": "Lấy chi tiết Khóa học theo ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/courses/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"courses",
+								"1"
+							]
+						}
+					}
+				},
+				{
+					"name": "Tạo Khóa học mới",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Lập Trình Go (Golang) Microservices\",\n    \"description\": \"Xây dựng dịch vụ backend hiệu năng cao với Golang và gRPC\",\n    \"duration\": 40,\n    \"price\": 2700000.0\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/courses",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"courses"
+							]
+						}
+					}
+				},
+				{
+					"name": "Cập nhật Khóa học theo ID",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Lập Trình Java 21 & Spring Boot Chuyên Sâu (2026)\",\n    \"description\": \"Cập nhật kiến trúc REST, Spring Security JWT và MinIO S3\",\n    \"duration\": 65,\n    \"price\": 2800000.0\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/courses/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"courses",
+								"1"
+							]
+						}
+					}
+				},
+				{
+					"name": "Tìm kiếm Khóa học theo tên",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/courses/search?keyword=Spring",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"courses",
+								"search"
+							],
+							"query": [
+								{
+									"key": "keyword",
+									"value": "Spring"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Lọc Khóa học theo khoảng giá",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/courses/filter?minPrice=2000000&maxPrice=3000000",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"courses",
+								"filter"
+							],
+							"query": [
+								{
+									"key": "minPrice",
+									"value": "2000000"
+								},
+								{
+									"key": "maxPrice",
+									"value": "3000000"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Đếm số lượng Khóa học",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/courses/count",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"courses",
+								"count"
+							]
+						}
+					}
+				},
+				{
+					"name": "Xóa Khóa học theo ID (Chỉ ADMIN)",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/courses/10",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"courses",
+								"10"
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "5. Students (Quản lý Sinh viên)",
+			"item": [
+				{
+					"name": "Lấy danh sách tất cả Sinh viên",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/students",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"students"
+							]
+						}
+					}
+				},
+				{
+					"name": "Lấy chi tiết Sinh viên theo ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/students/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"students",
+								"1"
+							]
+						}
+					}
+				},
+				{
+					"name": "Thêm mới Sinh viên",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"fullName\": \"Trần Minh Đức\",\n    \"email\": \"duc.tran2026@example.com\",\n    \"phone\": \"0933445566\",\n    \"address\": \"TP. Hồ Chí Minh, Việt Nam\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/students",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"students"
+							]
+						}
+					}
+				},
+				{
+					"name": "Cập nhật Sinh viên theo ID",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"fullName\": \"Phú Văn Bình (Đã cập nhật)\",\n    \"email\": \"binh.phu24@example.com\",\n    \"phone\": \"0987654321\",\n    \"address\": \"Quận 1, TP. Hồ Chí Minh\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/students/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"students",
+								"1"
+							]
+						}
+					}
+				},
+				{
+					"name": "Tìm kiếm Sinh viên theo tên/email",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/students/search?keyword=Bình",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"students",
+								"search"
+							],
+							"query": [
+								{
+									"key": "keyword",
+									"value": "Bình"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Xóa Sinh viên theo ID (Chỉ ADMIN)",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/students/10",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"students",
+								"10"
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "6. Documents & MinIO (Quản lý File tài liệu)",
+			"item": [
+				{
+					"name": "Lấy danh sách tất cả Tài liệu",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/documents",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"documents"
+							]
+						}
+					}
+				},
+				{
+					"name": "Lấy chi tiết Tài liệu theo ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/documents/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"documents",
+								"1"
+							]
+						}
+					}
+				},
+				{
+					"name": "Upload File đơn lên MinIO",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "C:/Users/binhp/OneDrive/Desktop/tailieu_mau_minio.txt"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/documents/upload",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"documents",
+								"upload"
+							]
+						}
+					}
+				},
+				{
+					"name": "Download File từ MinIO theo ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/documents/download/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"documents",
+								"download",
+								"1"
+							]
+						}
+					}
+				},
+				{
+					"name": "Xem lịch sử phiên bản (Version History) của File",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/documents/history?fileName=Giao_trinh_Java_SpringBoot_2026.pdf",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"documents",
+								"history"
+							],
+							"query": [
+								{
+									"key": "fileName",
+									"value": "Giao_trinh_Java_SpringBoot_2026.pdf"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Lấy Presigned URL tải trực tiếp từ MinIO",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/documents/1/presigned-url",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"documents",
+								"1",
+								"presigned-url"
+							]
+						}
+					}
+				},
+				{
+					"name": "Xóa mềm Tài liệu (Soft Delete)",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/documents/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"documents",
+								"1"
+							]
+						}
+					}
+				},
+				{
+					"name": "Xóa vĩnh viễn Tài liệu (Hard Delete MinIO & DB)",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/documents/10/hard-delete",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"documents",
+								"10",
+								"hard-delete"
+							]
+						}
+					}
+				}
+			]
+		}
+	]
+}
