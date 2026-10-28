@@ -16,8 +16,15 @@ else
     docker start mysql-cms || true
 fi
 
-echo "Dang doi MySQL san sang (15 giay)..."
-sleep 15
+echo "Dang cho MySQL san sang ket noi..."
+for i in {1..30}; do
+    if docker exec mysql-cms mysqladmin ping -p123456789 --silent >/dev/null 2>&1; then
+        echo "MySQL da san sang 100%!"
+        break
+    fi
+    echo "  MySQL dang khoi tao CSDL, vui long cho (3 giay)..."
+    sleep 3
+done
 
 # 2. Tai Cloudflared cho Linux neu chua co
 echo "[2/5] Cai dat cong cu tao URL cong khai Cloudflared..."
@@ -37,13 +44,22 @@ pkill -f "course-management-system" || true
 nohup java -jar target/course-management-system-0.0.1-SNAPSHOT.jar > spring.log 2>&1 &
 
 echo "Dang cho ung dung khoi dong xong..."
+STARTED=false
 for i in {1..30}; do
     if curl -s http://localhost:8080 > /dev/null; then
         echo "Spring Boot da chay thanh cong!"
+        STARTED=true
         break
     fi
     sleep 2
 done
+
+if [ "$STARTED" = false ]; then
+    echo "❌ LOI: Spring Boot khong khoi dong duoc tren cong 8080!"
+    echo "=== 30 DONG LOG CUOI CUA spring.log ==="
+    tail -n 30 spring.log
+    exit 1
+fi
 
 # 5. Khoi tao URL cong khai Cloudflare Tunnel
 echo "[5/5] Dang tao URL cong khai qua Internet cho giao vien..."
