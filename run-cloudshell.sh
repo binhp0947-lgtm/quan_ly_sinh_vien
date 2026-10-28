@@ -28,6 +28,7 @@ fi
 
 # 3. Build file JAR Spring Boot
 echo "[3/5] Dang bien dich va dong goi ung dung Spring Boot..."
+chmod +x mvnw
 ./mvnw clean package -DskipTests
 
 # 4. Chay Spring Boot ngam
