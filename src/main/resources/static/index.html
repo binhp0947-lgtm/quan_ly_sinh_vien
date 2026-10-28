@@ -1,0 +1,1584 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>VJU - Cổng Thông Tin Quản Lý Đào Tạo</title>
+  <style>
+    :root {
+      --primary: #c8102e;
+      --primary-dark: #9e0c24;
+      --primary-light: #fbebee;
+      --primary-border: #f5c2cb;
+      --secondary: #333333;
+      --gray-bg: #f4f6f9;
+      --card-bg: #ffffff;
+      --border-color: #e2e8f0;
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+      --success: #16a34a;
+      --warning: #d97706;
+      --danger: #dc2626;
+      --info: #0284c7;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+      background: var(--gray-bg);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* =========================================================
+       TOPBAR & HEADER
+    ========================================================= */
+    .topbar {
+      background: var(--primary);
+      color: #fff;
+      padding: 10px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+      z-index: 50;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .topbar-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-circle {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .brand-circle svg {
+      width: 22px;
+      height: 22px;
+      fill: var(--primary);
+    }
+
+    .brand-text h1 {
+      font-size: 16.5px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+    .brand-text p {
+      font-size: 11px;
+      opacity: 0.9;
+    }
+
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .user-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #fff;
+      color: var(--text-main);
+      padding: 5px 14px;
+      border-radius: 20px;
+      font-size: 12.5px;
+      font-weight: 600;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+    .role-badge {
+      background: var(--primary-light);
+      color: var(--primary);
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .btn-topbar-login {
+      background: rgba(255,255,255,0.2);
+      border: 1px solid rgba(255,255,255,0.4);
+      color: #fff;
+      padding: 5px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.15s;
+    }
+    .btn-topbar-login:hover {
+      background: #fff;
+      color: var(--primary);
+    }
+
+    .btn-topbar-logout {
+      background: transparent;
+      border: 1.5px solid rgba(255,255,255,0.8);
+      color: #fff;
+      padding: 5px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-topbar-logout:hover {
+      background: rgba(255,255,255,0.2);
+    }
+
+    /* =========================================================
+       APP SHELL & LAYOUT
+    ========================================================= */
+    .app-shell {
+      display: flex;
+      flex: 1;
+      min-height: calc(100vh - 60px);
+      max-width: 1500px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 16px;
+      gap: 16px;
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+      width: 240px;
+      flex-shrink: 0;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+      overflow: hidden;
+    }
+
+    .sidebar-header {
+      padding: 16px;
+      text-align: center;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .sidebar-header .vju-logo {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--primary);
+      letter-spacing: 1px;
+    }
+    .sidebar-header .subtitle {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+
+    .menu-list {
+      list-style: none;
+      padding: 10px 0;
+      flex: 1;
+      overflow-y: auto;
+    }
+    .menu-group-title {
+      font-size: 10.5px;
+      font-weight: 700;
+      color: var(--text-muted);
+      padding: 8px 16px 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+    .menu-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 11px 16px;
+      font-size: 13.5px;
+      color: #475569;
+      cursor: pointer;
+      transition: all 0.15s;
+      border-left: 3px solid transparent;
+      user-select: none;
+    }
+    .menu-item:hover {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+    .menu-item.active {
+      background: var(--primary-light);
+      color: var(--primary);
+      font-weight: 700;
+      border-left-color: var(--primary);
+    }
+    .menu-item .badge-count {
+      margin-left: auto;
+      background: #e2e8f0;
+      color: #475569;
+      font-size: 11px;
+      padding: 2px 6px;
+      border-radius: 10px;
+      font-weight: 600;
+    }
+    .menu-item.active .badge-count {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .sidebar-footer {
+      padding: 12px 16px;
+      border-top: 1px solid var(--border-color);
+      background: #fafafa;
+      font-size: 11.5px;
+      color: var(--text-muted);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    /* MAIN CONTENT AREA */
+    .main-panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      gap: 16px;
+    }
+
+    .page-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      padding: 24px;
+      min-height: 580px;
+    }
+
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 12px;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 14px;
+    }
+
+    .page-title-box h2 {
+      font-size: 19px;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .page-title-box p {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* TOOLBAR */
+    .toolbar-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .search-box {
+      position: relative;
+      width: 280px;
+    }
+    .search-box input {
+      width: 100%;
+      padding: 8px 14px 8px 34px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      font-size: 13px;
+      outline: none;
+      transition: border 0.15s;
+      background: #fafafa;
+    }
+    .search-box input:focus {
+      border-color: var(--primary);
+      background: #fff;
+    }
+    .search-icon {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #94a3b8;
+      font-size: 14px;
+      pointer-events: none;
+    }
+
+    .action-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    /* BUTTONS */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: all 0.15s;
+      text-decoration: none;
+      user-select: none;
+    }
+    .btn:hover {
+      opacity: 0.9;
+    }
+    .btn-primary   { background: var(--primary); color: #fff; }
+    .btn-secondary { background: #64748b; color: #fff; }
+    .btn-success   { background: var(--success); color: #fff; }
+    .btn-warning   { background: var(--warning); color: #fff; }
+    .btn-danger    { background: var(--danger); color: #fff; }
+    .btn-outline   { background: #fff; border: 1px solid var(--border-color); color: var(--text-main); }
+    .btn-outline:hover { background: #f8fafc; border-color: #cbd5e1; }
+    .btn-sm        { padding: 5px 11px; font-size: 12px; }
+
+    /* =========================================================
+       TABLE STYLES
+    ========================================================= */
+    .table-container {
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      overflow-x: auto;
+      flex: 1;
+      background: #fff;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      text-align: left;
+    }
+
+    thead th {
+      background: #f8fafc;
+      color: #475569;
+      font-weight: 700;
+      padding: 10px 14px;
+      border-bottom: 2px solid var(--border-color);
+      white-space: nowrap;
+    }
+    thead th.center { text-align: center; }
+
+    tbody tr {
+      border-bottom: 1px solid var(--border-color);
+      transition: background 0.12s;
+      cursor: pointer;
+    }
+    tbody tr:hover { background: #fdf2f4; }
+    tbody tr.selected { background: #fae8eb; }
+
+    tbody td {
+      padding: 10px 14px;
+      color: #334155;
+      vertical-align: middle;
+    }
+    tbody td.center { text-align: center; }
+
+    /* BADGES */
+    .badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    .badge-active   { background: #dcfce7; color: #15803d; }
+    /* BUG-007: Thôi học nhưng style nhầm màu xanh lá */
+    .badge-dropout  { background: #22c55e; color: #ffffff; }
+    .badge-graduated{ background: #e0f2fe; color: #0369a1; }
+    .badge-role     { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; }
+    .badge-danger   { background: #fee2e2; color: #b91c1c; }
+
+    /* MODAL OVERLAY */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.45);
+      backdrop-filter: blur(2px);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-overlay.open {
+      display: flex;
+    }
+
+    .modal-dialog {
+      background: #fff;
+      border-radius: 12px;
+      padding: 24px 28px;
+      width: 480px;
+      max-width: 95vw;
+      box-shadow: 0 10px 35px rgba(0,0,0,0.2);
+      animation: zoomIn 0.15s ease-out;
+    }
+
+    /* BUG-008: Modal thêm khóa học bị lệch góc trái */
+    .modal-dialog.course-modal-box {
+      position: fixed !important;
+      left: 35px !important;
+      top: 60px !important;
+      margin: 0 !important;
+    }
+
+    @keyframes zoomIn {
+      from { transform: scale(0.95); opacity: 0; }
+      to   { transform: scale(1); opacity: 1; }
+    }
+
+    .modal-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .form-group {
+      margin-bottom: 14px;
+    }
+    .form-group label {
+      display: block;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: #475569;
+      margin-bottom: 5px;
+    }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      border-color: var(--primary);
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    /* TOAST NOTIFICATIONS */
+    .toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 9999;
+      max-width: 440px;
+    }
+    .toast-card {
+      background: #1e293b;
+      color: #fff;
+      padding: 12px 18px;
+      border-radius: 8px;
+      font-size: 13px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      animation: slideIn 0.2s ease-out;
+      border-left: 4px solid #64748b;
+    }
+    .toast-card.ok      { border-left-color: var(--success); }
+    .toast-card.err     { border-left-color: var(--danger); background: #3f1519; }
+    .toast-card.sql-err { border-left-color: #f59e0b; background: #261f18; font-family: monospace; font-size: 11.5px; } /* BUG-009 */
+    .toast-card.warn    { border-left-color: var(--warning); }
+    @keyframes slideIn {
+      from { transform: translateX(50px); opacity: 0; }
+      to   { transform: translateX(0); opacity: 1; }
+    }
+
+    /* TAB CONTENT TOGGLE */
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    /* EMAIL TEMPLATE TAB */
+    .email-preview-box {
+      border: 1px solid #cbd5e1;
+      padding: 24px;
+      border-radius: 8px;
+      background: #fff;
+      font-family: Arial, sans-serif;
+      max-width: 650px;
+      margin: 16px auto;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+    }
+    .email-header {
+      background: #c8102e;
+      color: #fff;
+      padding: 14px;
+      text-align: center;
+      font-size: 16px;
+      font-weight: bold;
+    }
+    .email-body {
+      padding: 20px;
+      font-size: 13.5px;
+      line-height: 1.6;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ==================== TOPBAR ==================== -->
+  <header class="topbar">
+    <div class="topbar-brand">
+      <div class="brand-circle">
+        <svg viewBox="0 0 24 24"><path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zm-7 9.17V17l7 4 7-4v-4.83L12 17l-7-4.83z"/></svg>
+      </div>
+      <div class="brand-text">
+        <h1>TRƯỜNG ĐẠI HỌC VIỆT NHẬT - VJU</h1>
+        <p>Hệ thống Quản lý Khóa học & Sinh viên (Course Management System)</p>
+      </div>
+    </div>
+
+    <div class="topbar-actions">
+      <!-- Thông tin tài khoản hiện tại -->
+      <div class="user-pill" id="userPill">
+        <span id="userNameDisplay">Quản trị viên Hệ thống</span>
+        <span class="role-badge" id="userRoleDisplay">ROLE_ADMIN</span>
+      </div>
+
+      <button class="btn-topbar-login" id="btnSwitchAccount" onclick="openLoginModal()">Chuyển tài khoản</button>
+      <button class="btn-topbar-logout" id="btnLogout" onclick="logout()">Đăng xuất</button>
+    </div>
+  </header>
+
+  <!-- ==================== APP BODY ==================== -->
+  <div class="app-shell">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="vju-logo">VJU PORTAL</div>
+        <div class="subtitle">Quản trị Đào tạo</div>
+      </div>
+
+      <ul class="menu-list">
+        <div class="menu-group-title">QUẢN LÝ ĐÀO TẠO</div>
+        <li class="menu-item active" id="menuStudents" data-page="students" onclick="switchPage('students')">
+          <span>👥 Quản lý Sinh viên</span>
+          <span class="badge-count" id="countStudents">10</span>
+        </li>
+        <li class="menu-item" id="menuCourses" data-page="courses" onclick="switchPage('courses')">
+          <span>📚 Quản lý Khóa học</span>
+          <span class="badge-count" id="countCourses">10</span>
+        </li>
+        <li class="menu-item" id="menuClasses" data-page="classes" onclick="switchPage('classes')">
+          <span>🏫 Quản lý Lớp học</span>
+          <span class="badge-count" id="countClasses">10</span>
+        </li>
+        <li class="menu-item" id="menuDepartments" data-page="departments" onclick="switchPage('departments')">
+          <span>🏛️ Khoa / Viện</span>
+          <span class="badge-count" id="countDepartments">10</span>
+        </li>
+        <li class="menu-item" id="menuDocuments" data-page="documents" onclick="switchPage('documents')">
+          <span>📁 Tài liệu & Giáo trình</span>
+          <span class="badge-count" id="countDocuments">10</span>
+        </li>
+        <li class="menu-item" id="menuTuition" data-page="tuition" onclick="switchPage('tuition')">
+          <span>✉️ Thông báo Học phí</span>
+        </li>
+
+        <div class="menu-group-title">HỆ THỐNG</div>
+        <li class="menu-item" id="menuUsers" data-page="users" onclick="switchPage('users')">
+          <span>🔐 Quản lý Người dùng</span>
+        </li>
+      </ul>
+
+      <div class="sidebar-footer">
+        <div><strong>Hệ thống:</strong> VJU Course Management</div>
+        <div><strong>Phiên bản:</strong> 1.0.0 Enterprise</div>
+      </div>
+    </aside>
+
+    <!-- MAIN PANEL -->
+    <main class="main-panel">
+
+      <!-- ==================== TAB 1: SINH VIÊN (STUDENTS) ==================== -->
+      <section class="page-card tab-content active" id="tab-students">
+        <div class="page-header">
+          <div class="page-title-box">
+            <h2>👥 Quản lý Danh sách Sinh viên</h2>
+            <p>Hồ sơ đào tạo, trạng thái học tập và thông tin liên lạc học viên</p>
+          </div>
+          <div class="action-group">
+            <button class="btn btn-primary" id="btnAddStudent" onclick="openStudentModal('add')">+ Thêm sinh viên</button>
+            <button class="btn btn-warning" id="btnEditStudent" onclick="openStudentModal('edit')">✏ Sửa sinh viên</button>
+            <button class="btn btn-danger" id="btnDeleteStudent" onclick="deleteStudent()">🗑 Xóa sinh viên</button>
+            <button class="btn btn-secondary" id="btnExportExcel" onclick="exportStudentExcel()">📊 Xuất danh sách Excel</button>
+          </div>
+        </div>
+
+        <div class="toolbar-row">
+          <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="studentSearchInput" placeholder="Tìm kiếm theo họ tên, MSSV, email..." oninput="handleStudentSearch()"/>
+          </div>
+          <div class="action-group">
+            <span style="font-size:12.5px;color:var(--text-muted)">Hiển thị: <strong id="studentDisplayCount">10</strong> sinh viên</span>
+          </div>
+        </div>
+
+        <div class="table-container">
+          <table id="studentTable">
+            <thead>
+              <tr>
+                <th class="center" style="width: 48px;">STT</th>
+                <th>Mã SV (MSSV)</th>
+                <th>Họ và tên</th>
+                <th>Email</th>
+                <th>Số điện thoại</th>
+                <th>Địa chỉ</th>
+                <th class="center">Trạng thái</th>
+              </tr>
+            </thead>
+            <tbody id="studentTableBody">
+              <!-- Render sinh viên -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ==================== TAB 2: KHÓA HỌC (COURSES) ==================== -->
+      <section class="page-card tab-content" id="tab-courses">
+        <div class="page-header">
+          <div class="page-title-box">
+            <h2>📚 Quản lý Danh mục Khóa học</h2>
+            <p>Chương trình đào tạo, thời lượng tín chỉ và mức học phí tương ứng</p>
+          </div>
+          <div class="action-group">
+            <button class="btn btn-primary" id="btnAddCourse" onclick="openCourseModal('add')">+ Thêm khóa học</button>
+            <button class="btn btn-warning" id="btnEditCourse" onclick="openCourseModal('edit')">✏ Sửa khóa học</button>
+            <button class="btn btn-danger" id="btnDeleteCourse" onclick="deleteCourse()">🗑 Xóa khóa học</button>
+          </div>
+        </div>
+
+        <div class="toolbar-row">
+          <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="courseSearchInput" placeholder="Tìm kiếm tên khóa học..." oninput="handleCourseSearch()"/>
+          </div>
+          <div class="action-group" style="font-size:12.5px;">
+            <label>Khoảng học phí:</label>
+            <input type="number" id="minPriceInput" placeholder="Từ" style="width:100px;padding:6px 8px;border:1px solid #ccc;border-radius:4px;"/>
+            <span>-</span>
+            <input type="number" id="maxPriceInput" placeholder="Đến" style="width:100px;padding:6px 8px;border:1px solid #ccc;border-radius:4px;"/>
+            <button class="btn btn-outline btn-sm" onclick="filterCoursesByPrice()">Lọc</button>
+            <button class="btn btn-outline btn-sm" onclick="resetCourseFilter()">Bỏ lọc</button>
+          </div>
+        </div>
+
+        <div class="table-container">
+          <table id="courseTable">
+            <thead>
+              <tr>
+                <th class="center" style="width: 48px;">STT</th>
+                <th>Mã KH</th>
+                <th>Tên Khóa Học</th>
+                <th>Mô Tả Chi Tiết</th>
+                <th class="center">Thời Lượng (Tiết)</th>
+                <th style="text-align:right;">Học Phí (VNĐ)</th>
+              </tr>
+            </thead>
+            <tbody id="courseTableBody">
+              <!-- Render khóa học -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ==================== TAB 3: LỚP HỌC (CLASSES) ==================== -->
+      <section class="page-card tab-content" id="tab-classes">
+        <div class="page-header">
+          <div class="page-title-box">
+            <h2>🏫 Quản lý Lớp học Phần</h2>
+            <p>Danh sách các lớp học phần, phòng học và khoa quản lý</p>
+          </div>
+          <div class="action-group">
+            <button class="btn btn-primary" onclick="alert('Đã mở form thêm lớp học')">+ Thêm lớp học</button>
+          </div>
+        </div>
+
+        <div class="toolbar-row">
+          <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="classSearchInput" placeholder="Tìm kiếm lớp học phần..." oninput="handleClassSearch()"/>
+          </div>
+          <div class="action-group" style="font-size:12.5px;">
+            <label>Ngày kết thúc:</label>
+            <input type="date" id="classEndDateInput" style="padding:5px 8px;border:1px solid #ccc;border-radius:4px;"/>
+            <button class="btn btn-outline btn-sm" onclick="filterClassByDate()">Tìm kiếm</button>
+          </div>
+        </div>
+
+        <div class="table-container">
+          <table id="classTable">
+            <thead>
+              <tr>
+                <th class="center" style="width: 48px;">STT</th>
+                <th>Mã Lớp</th>
+                <th>Tên Lớp Học Phần</th>
+                <th>Phòng Học</th>
+                <th>Mô Tả Chuyên Ngành</th>
+                <th>Khoa Phụ Trách</th>
+              </tr>
+            </thead>
+            <tbody id="classTableBody">
+              <!-- Render lớp học -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ==================== TAB 4: KHOA / VIỆN (DEPARTMENTS) ==================== -->
+      <section class="page-card tab-content" id="tab-departments">
+        <div class="page-header">
+          <div class="page-title-box">
+            <h2>🏛️ Danh mục Khoa & Viện Đào tạo</h2>
+            <p>Cơ cấu tổ chức các đơn vị chuyên môn thuộc Trường Đại học Việt Nhật</p>
+          </div>
+          <div class="action-group">
+            <button class="btn btn-primary" onclick="alert('Thêm khoa đào tạo')">+ Thêm khoa / viện</button>
+          </div>
+        </div>
+
+        <div class="table-container">
+          <table id="deptTable">
+            <thead>
+              <tr>
+                <th class="center" style="width: 48px;">STT</th>
+                <th>ID</th>
+                <th>dept_code</th>
+                <th>Tên Khoa / Viện Đào Tạo</th>
+                <th>Mô Tả Định Hướng</th>
+              </tr>
+            </thead>
+            <tbody id="deptTableBody">
+              <!-- Render Khoa -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ==================== TAB 5: TÀI LIỆU (DOCUMENTS) ==================== -->
+      <section class="page-card tab-content" id="tab-documents">
+        <div class="page-header">
+          <div class="page-title-box">
+            <h2>📁 Quản lý Tài liệu & Giáo trình Học tập</h2>
+            <p>Lưu trữ và phân phối tài liệu, bài giảng môn học qua hệ thống lưu trữ số</p>
+          </div>
+        </div>
+
+        <!-- Khung upload file nghiệp vụ -->
+        <div style="background:#f8fafc;border:1px solid #cbd5e1;padding:16px;border-radius:8px;margin-bottom:16px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+          <div>
+            <label style="font-size:12.5px;font-weight:600;display:block;margin-bottom:4px;">Tải lên tệp tài liệu mới:</label>
+            <input type="file" id="fileUploadInput" style="font-size:12px;" />
+          </div>
+          <button class="btn btn-primary btn-sm" id="btnUploadFile" onclick="handleFileUpload()">📤 Tải lên</button>
+        </div>
+
+        <div class="table-container">
+          <table id="documentTable">
+            <thead>
+              <tr>
+                <th class="center" style="width: 48px;">STT</th>
+                <th>Tên Tài Liệu</th>
+                <th>Loại Tệp</th>
+                <th>Kích Thước</th>
+                <th>Kho Lưu Trữ</th>
+                <th>Phiên Bản</th>
+                <th class="center">Thao Tác</th>
+              </tr>
+            </thead>
+            <tbody id="documentTableBody">
+              <!-- Render tài liệu -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ==================== TAB 6: MẪU EMAIL THÔNG BÁO HỌC PHÍ ==================== -->
+      <section class="page-card tab-content" id="tab-tuition">
+        <div class="page-header">
+          <div class="page-title-box">
+            <h2>✉️ Xem Trước Mẫu Email Thông Báo Học Phí</h2>
+            <p>Mẫu thông báo tự động gửi tới email sinh viên khi bắt đầu học kỳ</p>
+          </div>
+        </div>
+
+        <div class="email-preview-box">
+          <div class="email-header">
+            TRƯỜNG ĐẠI HỌC VIỆT NHẬT (VJU) - PHÒNG ĐÀO TẠO
+          </div>
+          <div class="email-body">
+            <p>Kính gửi sinh viên: <strong>Nguyễn Văn An (MSSV: 24110002)</strong>,</p>
+            <br/>
+            <p>Nhà trường thông báo Học phĩ họ kì 1 năm học 2026 - 2027 cho khóa học <em>"Lập Trình Java 21 & Spring Boot Chuyên Sâu"</em> như sau:</p>
+            <br/>
+            <ul>
+              <li><strong>Số tín chỉ:</strong> 3 tín chỉ</li>
+              <li><strong>Số tiền học phí:</strong> 2,500,000 $</li>
+              <li><strong>Hạn cuối nộp:</strong> 15/11/2026</li>
+            </ul>
+            <br/>
+            <p>Trân trọng cảm ơn,<br/><strong>Phòng Kế toán - Đại học Việt Nhật</strong></p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== TAB 7: QUẢN TRỊ NGƯỜI DÙNG ==================== -->
+      <section class="page-card tab-content" id="tab-users">
+        <div class="page-header">
+          <div class="page-title-box">
+            <h2>🔐 Quản trị Tài khoản Người dùng</h2>
+            <p>Danh sách tài khoản, vai trò và phân quyền hoạt động trong hệ thống</p>
+          </div>
+        </div>
+
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th class="center" style="width: 48px;">STT</th>
+                <th>Tên Đăng Nhập</th>
+                <th>Họ và Tên</th>
+                <th>Email</th>
+                <th>Vai Trò (Role)</th>
+                <th class="center">Trạng Thái</th>
+                <th class="center">Thao Tác</th>
+              </tr>
+            </thead>
+            <tbody id="userTableBody">
+              <!-- Render Users -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ==================== MODAL THÊM / SỬA SINH VIÊN ==================== -->
+  <div class="modal-overlay" id="modalStudent">
+    <div class="modal-dialog">
+      <div class="modal-title">
+        <span id="modalStudentTitle">Thêm sinh viên mới</span>
+        <button onclick="closeModal('modalStudent')" style="background:none;border:none;font-size:18px;cursor:pointer;">&times;</button>
+      </div>
+
+      <div class="form-group">
+        <label>Mã Sinh Viên (MSSV):</label>
+        <input type="text" id="fStudentMssv" placeholder="Nhập MSSV..."/>
+      </div>
+
+      <div class="form-group">
+        <label>Họ và tên:</label>
+        <input type="text" id="fStudentFullName" placeholder="Nhập họ và tên đầy đủ..."/>
+      </div>
+
+      <div class="form-group">
+        <label>Email:</label>
+        <input type="text" id="fStudentEmail" placeholder="Nhập địa chỉ email..."/>
+      </div>
+
+      <div class="form-group">
+        <label>Số điện thoại:</label>
+        <input type="text" id="fStudentPhone" placeholder="Số điện thoại..."/>
+      </div>
+
+      <div class="form-group">
+        <label>Địa chỉ thường trú:</label>
+        <input type="text" id="fStudentAddress" placeholder="Địa chỉ thường trú..."/>
+      </div>
+
+      <div class="form-group">
+        <label>Trạng thái:</label>
+        <select id="fStudentStatus">
+          <option value="ACTIVE">ACTIVE</option>
+          <option value="DROPOUT">DROPOUT</option>
+          <option value="GRADUATED">GRADUATED</option>
+        </select>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn btn-outline" onclick="closeModal('modalStudent')">Hủy bỏ</button>
+        <button class="btn btn-primary" id="btnSaveStudent" onclick="saveStudent()">Lưu thông tin</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL THÊM / SỬA KHÓA HỌC ==================== -->
+  <div class="modal-overlay" id="modalCourse">
+    <div class="modal-dialog course-modal-box">
+      <div class="modal-title">
+        <span id="modalCourseTitle">Thêm Khóa Học Mới</span>
+        <button onclick="closeModal('modalCourse')" style="background:none;border:none;font-size:18px;cursor:pointer;">&times;</button>
+      </div>
+
+      <div class="form-group">
+        <label>Tên khóa học:</label>
+        <input type="text" id="fCourseTitle" placeholder="Nhập tên khóa học..."/>
+      </div>
+
+      <div class="form-group">
+        <label>Mô tả nội dung:</label>
+        <textarea id="fCourseDesc" rows="3" placeholder="Mô tả đề cương khóa học..."></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Thời lượng (số tiết):</label>
+        <input type="number" id="fCourseDuration" placeholder="Nhập số tiết..."/>
+      </div>
+
+      <div class="form-group">
+        <label>Học phí (VNĐ):</label>
+        <input type="number" id="fCoursePrice" placeholder="Nhập học phí..."/>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn btn-outline" onclick="closeModal('modalCourse')">Hủy bỏ</button>
+        <button class="btn btn-primary" id="btnSaveCourse" onclick="saveCourse()">Lưu khóa học</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL ĐĂNG NHẬP / CHUYỂN TÀI KHOẢN ==================== -->
+  <div class="modal-overlay" id="modalLogin">
+    <div class="modal-dialog" style="width:380px;">
+      <div class="modal-title">
+        <span>Đăng nhập hệ thống</span>
+        <button onclick="closeModal('modalLogin')" style="background:none;border:none;font-size:18px;cursor:pointer;">&times;</button>
+      </div>
+
+      <div class="form-group">
+        <label>Tên đăng nhập (Username):</label>
+        <input type="text" id="loginUsername" placeholder="Nhập username..."/>
+      </div>
+
+      <div class="form-group">
+        <label>Mật khẩu:</label>
+        <input type="password" id="loginPassword" placeholder="Nhập mật khẩu..."/>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn btn-outline" onclick="closeModal('modalLogin')">Đóng</button>
+        <button class="btn btn-primary" id="btnLoginSubmit" onclick="doLogin()">Đăng nhập</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST CONTAINER -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- ==================== JAVASCRIPT ==================== -->
+  <script>
+    let API_BASE_URL = 'http://localhost:8080';
+    let currentUser = {
+      username: 'admin',
+      fullName: 'Quản trị viên Hệ thống',
+      role: 'ROLE_ADMIN'
+    };
+
+    /* Dữ liệu mẫu */
+    let students = [
+      { id: 1, mssv: '24110001', fullName: 'Phú Văn Bình',   email: 'binh.phu24@example.com', phone: '0987654321', address: 'Hà Nội, Việt Nam', status: 'ACTIVE' },
+      { id: 2, mssv: '24110002', fullName: 'Nguyễn Văn An',  email: 'an.nguyen@example.com',  phone: '0912345671', address: 'Hà Nội, Việt Nam', status: 'DROPOUT' },
+      { id: 3, mssv: '24110003', fullName: 'Trần Thị Bích',  email: 'bich.tran@example.com',  phone: '0912345672', address: 'Đà Nẵng, Việt Nam', status: 'ACTIVE' },
+      { id: 4, mssv: '24110004', fullName: 'Lê Hoàng Cường', email: 'cuong.le@example.com',   phone: '0912345673', address: 'Cần Thơ, Việt Nam', status: 'ACTIVE' },
+      { id: 5, mssv: '24110005', fullName: 'Phạm Thị Dung',  email: 'dung.pham@example.com',  phone: '0912345674', address: 'Hải Phòng, Việt Nam', status: 'DROPOUT' },
+      { id: 6, mssv: '24110006', fullName: 'Vũ Minh Đức',    email: 'duc.vu@example.com',     phone: '0912345675', address: 'Khánh Hòa, Việt Nam', status: 'ACTIVE' },
+      { id: 7, mssv: '24110007', fullName: 'Đặng Hải Yến',   email: 'yen.dang@example.com',   phone: '0912345676', address: 'Quảng Ninh, Việt Nam', status: 'GRADUATED' },
+      { id: 8, mssv: '24110008', fullName: 'Bùi Quang Huy',  email: 'huy.bui@example.com',    phone: '0912345677', address: 'Huế, Việt Nam', status: 'ACTIVE' },
+      { id: 9, mssv: '24110009', fullName: 'Hoàng Mai Lan',  email: 'lan.hoang@example.com',  phone: '0912345678', address: 'Bình Dương, Việt Nam', status: 'ACTIVE' },
+      { id: 10, mssv: '24110010', fullName: 'Đỗ Nhật Nam',   email: 'nam.do@example.com',     phone: '0912345679', address: 'Đồng Nai, Việt Nam', status: 'ACTIVE' }
+    ];
+
+    let courses = [
+      { id: 1, title: 'Lập Trình Java 21 & Spring Boot Chuyên Sâu', description: 'RESTful API Enterprise, Spring Data JPA, Generic DAO và JWT Security', duration: 60, price: 2500000 },
+      { id: 2, title: 'Thiết Kế & Tối Ưu Hóa CSDL MySQL 8.x',       description: 'Lược đồ chuẩn hóa 3NF, Indexing và Query Execution Plan', duration: 45, price: 1800000 },
+      { id: 3, title: 'Kiến Trúc Microservices với Spring Cloud',  description: 'Hệ thống phân tán, API Gateway, Eureka Discovery và Kafka', duration: 55, price: 3200000 },
+      { id: 4, title: 'Lập Trình Frontend ReactJS Hiện Đại',       description: 'Single Page Application, Tailwind CSS và State Management', duration: 50, price: 2200000 },
+      { id: 5, title: 'Triển Khai Hệ Thống với Docker & K8s',      description: 'Container hóa Spring Boot, MinIO cluster và CI/CD', duration: 40, price: 2600000 },
+      { id: 6, title: 'Machine Learning & Phân Tích Dữ Liệu Python',description: 'Pandas, NumPy, Scikit-Learn và TensorFlow', duration: 65, price: 3000000 },
+      { id: 7, title: 'An Toàn Thông Tin & Bảo Mật Web Nâng Cao',  description: 'OWASP Top 10, SQL Injection, XSS, JWT Authorization', duration: 45, price: 2400000 },
+      { id: 8, title: 'Lập Trình Di Động Flutter & Dart',           description: 'Xây dựng ứng dụng đa nền tảng iOS & Android', duration: 50, price: 2300000 },
+      { id: 9, title: 'Kiểm Thử Phần Mềm Tự Động (Automation)',   description: 'Postman, Newman CLI, Puppeteer và JUnit 5', duration: 35, price: 1700000 },
+      { id: 10, title: 'Quản Trị Dự Án Phần Mềm Agile/Scrum',       description: 'Lập kế hoạch Sprint, quản lý Backlog với Jira', duration: 30, price: 1500000 }
+    ];
+
+    let classesList = [
+      { id: 1, classCode: '24110901_CNTT', className: 'Lớp Kỹ Thuật Phần Mềm K24', room: 'A1-301', description: 'Chuyên ngành Kỹ thuật phần mềm', deptName: 'Khoa CNTT' },
+      { id: 2, classCode: '24110902_AI',   className: 'Lớp Trí Tuệ Nhân Tạo K24', room: 'A1-302', description: 'Khoa học dữ liệu & Trí tuệ nhân tạo', deptName: 'Khoa CNTT' },
+      { id: 3, classCode: '24110903_IOT',  className: 'Lớp Internet Vạn Vật K24', room: 'B2-101', description: 'Hệ thống IoT và điều khiển', deptName: 'Khoa ĐTVT' },
+      { id: 4, classCode: '24110904_CS',   className: 'Lớp Khoa Học Máy Tính K24', room: 'B2-102', description: 'Tính toán nâng cao', deptName: 'Khoa KHMT' },
+      { id: 5, classCode: '24110905_SE',   className: 'Lớp Công Nghệ Phần Mềm K24', room: 'C3-201', description: 'Phát triển ứng dụng Web/App', deptName: 'Khoa KTPM' }
+    ];
+
+    let departments = [
+      { id: 1, deptCode: 'CNTT_01', name: 'Khoa Công Nghệ Thông Tin', desc: 'Đào tạo kỹ sư phần mềm, hệ thống thông tin' },
+      { id: 2, deptCode: 'DTVT_02', name: 'Khoa Điện Tử Viễn Thông', desc: 'Đào tạo vi mạch, IoT, hệ thống viễn thông' },
+      { id: 3, deptCode: 'KHMT_03', name: 'Khoa Khoa Học Máy Tính', desc: 'Đào tạo thuật toán, đồ họa máy tính và AI' },
+      { id: 4, deptCode: 'KTPM_04', name: 'Khoa Kỹ Thuật Phần Mềm', desc: 'Kiến trúc phần mềm, quy trình Agile và DevOps' },
+      { id: 5, deptCode: 'ATTT_05', name: 'Khoa An Toàn Thông Tin', desc: 'An ninh mạng, mật mã học và bảo mật web' }
+    ];
+
+    let documents = [
+      { id: 1, name: 'Giao_trinh_Java_SpringBoot_2026.pdf', type: 'application/pdf', size: '15.0 MB', bucket: 'documents', ver: 1.0 },
+      { id: 2, name: 'De_cuong_chi_tiet_MySQL_Database.docx', type: 'application/vnd.openxmlformats', size: '3.0 MB', bucket: 'documents', ver: 1.0 },
+      { id: 3, name: 'Huong_dan_cai_dat_MinIO_Object_Storage.pdf', type: 'application/pdf', size: '2.0 MB', bucket: 'documents', ver: 1.0 },
+      { id: 4, name: 'Bai_tap_lon_Kien_truc_Phan_mem.docx', type: 'application/vnd.openxmlformats', size: '4.0 MB', bucket: 'documents', ver: 1.0 },
+      { id: 5, name: 'Quy_che_dao_tao_tin_chi_Dai_hoc.pdf', type: 'application/pdf', size: '6.0 MB', bucket: 'documents', ver: 1.0, isMissing: true }
+    ];
+
+    let users = [
+      { id: 1, username: 'admin', fullName: 'Quản trị viên Hệ thống', email: 'admin@course.edu.vn', role: 'ROLE_ADMIN', active: true },
+      { id: 2, username: 'lecturer', fullName: 'TS. Nguyễn Văn Giảng', email: 'lecturer@course.edu.vn', role: 'ROLE_LECTURER', active: true },
+      { id: 3, username: 'student', fullName: 'Phú Văn Bình', email: 'binh.phu24@example.com', role: 'ROLE_STUDENT', active: true }
+    ];
+
+    let selectedStudentId = null;
+    let selectedCourseId = null;
+    let editMode = 'add';
+
+    /* ---------- NAVIGATION ---------- */
+    function switchPage(pageKey) {
+      document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+
+      const menuItem = document.getElementById('menu' + capitalize(pageKey));
+      if (menuItem) menuItem.classList.add('active');
+
+      const targetTab = document.getElementById('tab-' + pageKey);
+      if (targetTab) targetTab.classList.add('active');
+    }
+
+    function capitalize(s) {
+      return s.charAt(0).toUpperCase() + s.slice(1);
+    }
+
+    /* ---------- SINH VIÊN ---------- */
+    function renderStudents(list = students) {
+      const tbody = document.getElementById('studentTableBody');
+      document.getElementById('studentDisplayCount').textContent = list.length;
+      document.getElementById('countStudents').textContent = students.length;
+
+      if (!list.length) {
+        tbody.innerHTML = `<tr><td colspan="7" class="center" style="padding:24px;color:#94a3b8;">Không tìm thấy sinh viên</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = list.map((s, idx) => {
+        let statusBadge = '';
+        if (s.status === 'DROPOUT') {
+          statusBadge = `<span class="badge badge-dropout">DROPOUT</span>`;
+        } else if (s.status === 'GRADUATED') {
+          statusBadge = `<span class="badge badge-graduated">GRADUATED</span>`;
+        } else {
+          statusBadge = `<span class="badge badge-active">ACTIVE</span>`;
+        }
+
+        const isSel = s.id === selectedStudentId ? 'selected' : '';
+        return `
+          <tr class="${isSel}" onclick="selectStudent(${s.id})">
+            <td class="center">${idx + 1}</td>
+            <td><strong>${s.mssv}</strong></td>
+            <td>${s.fullName}</td>
+            <td>${s.email}</td>
+            <td>${s.phone || '---'}</td>
+            <td>${s.address || '---'}</td>
+            <td class="center">${statusBadge}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function selectStudent(id) {
+      selectedStudentId = (selectedStudentId === id) ? null : id;
+      renderStudents();
+    }
+
+    function handleStudentSearch() {
+      const q = document.getElementById('studentSearchInput').value.trim().toLowerCase();
+      const filtered = students.filter(s =>
+        s.fullName.toLowerCase().includes(q) ||
+        s.mssv.toLowerCase().includes(q) ||
+        s.email.toLowerCase().includes(q)
+      );
+      renderStudents(filtered);
+    }
+
+    function openStudentModal(mode) {
+      editMode = mode;
+      const modal = document.getElementById('modalStudent');
+      if (mode === 'add') {
+        document.getElementById('modalStudentTitle').textContent = 'Thêm sinh viên mới';
+        document.getElementById('fStudentMssv').value = '';
+        document.getElementById('fStudentFullName').value = '';
+        document.getElementById('fStudentEmail').value = '';
+        document.getElementById('fStudentPhone').value = '';
+        document.getElementById('fStudentAddress').value = '';
+        document.getElementById('fStudentStatus').value = 'ACTIVE';
+      } else {
+        if (!selectedStudentId) {
+          toast('Vui lòng chọn một sinh viên từ bảng để sửa!', 'warn');
+          return;
+        }
+        const s = students.find(x => x.id === selectedStudentId);
+        document.getElementById('modalStudentTitle').textContent = 'Cập nhật sinh viên';
+        document.getElementById('fStudentMssv').value = s.mssv;
+        document.getElementById('fStudentFullName').value = s.fullName;
+        document.getElementById('fStudentEmail').value = s.email;
+        document.getElementById('fStudentPhone').value = s.phone;
+        document.getElementById('fStudentAddress').value = s.address;
+        document.getElementById('fStudentStatus').value = s.status || 'ACTIVE';
+      }
+      modal.classList.add('open');
+    }
+
+    function saveStudent() {
+      const mssv = document.getElementById('fStudentMssv').value.trim();
+      const fullName = document.getElementById('fStudentFullName').value.trim();
+      const email = document.getElementById('fStudentEmail').value.trim();
+      const phone = document.getElementById('fStudentPhone').value.trim();
+      const address = document.getElementById('fStudentAddress').value.trim();
+      const status = document.getElementById('fStudentStatus').value;
+
+      // Không validate client-side: để backend xử lý
+      const isDuplicate = students.some(x => x.mssv === mssv && (editMode === 'add' || x.id !== selectedStudentId));
+      if (isDuplicate) {
+        closeModal('modalStudent');
+        toast(`com.mysql.cj.jdbc.exceptions.MySQLIntegrityConstraintViolationException: Duplicate entry '${mssv}' for key 'students.UK_email' (SQL state: 23000, error code: 1062)`, 'sql-err');
+        return;
+      }
+
+      if (editMode === 'add') {
+        const newId = students.length ? Math.max(...students.map(x => x.id)) + 1 : 1;
+        students.push({ id: newId, mssv, fullName, email, phone, address, status });
+        toast('Thêm sinh viên thành công!', 'ok');
+      } else {
+        const item = students.find(x => x.id === selectedStudentId);
+        if (item) {
+          item.fullName = fullName;
+          item.email = email;
+          item.phone = phone;
+          item.address = address;
+          item.status = status;
+          toast('Cập nhật thông tin sinh viên thành công!', 'ok');
+        }
+      }
+
+      closeModal('modalStudent');
+      renderStudents();
+    }
+
+    function deleteStudent() {
+      if (!selectedStudentId) {
+        toast('Vui lòng chọn 1 sinh viên trong bảng để xóa!', 'warn');
+        return;
+      }
+      if (currentUser.role !== 'ROLE_ADMIN') {
+        toast('Lỗi 403 Forbidden: Chỉ Quản trị viên mới có quyền xóa sinh viên!', 'err');
+        return;
+      }
+      students = students.filter(x => x.id !== selectedStudentId);
+      selectedStudentId = null;
+      renderStudents();
+      toast('Đã xóa sinh viên thành công!', 'ok');
+    }
+
+    function exportStudentExcel() {
+      toast('Đang xử lý xuất dữ liệu sinh viên ra file Excel...', 'warn');
+      setTimeout(() => {
+        toast('Lỗi 500: java.lang.OutOfMemoryError: Java heap space', 'err');
+      }, 1500);
+    }
+
+    /* ---------- KHÓA HỌC ---------- */
+    function renderCourses(list = courses) {
+      const tbody = document.getElementById('courseTableBody');
+      document.getElementById('countCourses').textContent = courses.length;
+
+      if (!list.length) {
+        tbody.innerHTML = `<tr><td colspan="6" class="center" style="padding:24px;color:#94a3b8;">Không tìm thấy khóa học</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = list.map((c, idx) => {
+        const isSel = c.id === selectedCourseId ? 'selected' : '';
+        return `
+          <tr class="${isSel}" onclick="selectCourse(${c.id})">
+            <td class="center">${idx + 1}</td>
+            <td><strong>KH-${c.id.toString().padStart(2, '0')}</strong></td>
+            <td><strong>${c.title}</strong></td>
+            <td>${c.description}</td>
+            <td class="center">${c.duration} tiết</td>
+            <td style="text-align:right;">${c.price.toLocaleString('vi-VN')} đ</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function selectCourse(id) {
+      selectedCourseId = (selectedCourseId === id) ? null : id;
+      renderCourses();
+    }
+
+    function handleCourseSearch() {
+      const q = document.getElementById('courseSearchInput').value.trim().toLowerCase();
+      // N+1 delay simulation
+      const filtered = courses.filter(c => c.title.toLowerCase().includes(q) || c.description.toLowerCase().includes(q));
+      renderCourses(filtered);
+    }
+
+    function filterCoursesByPrice() {
+      const minP = parseFloat(document.getElementById('minPriceInput').value) || 0;
+      const maxP = parseFloat(document.getElementById('maxPriceInput').value) || 999999999;
+      const filtered = courses.filter(c => c.price >= minP && c.price <= maxP);
+      renderCourses(filtered);
+    }
+
+    function resetCourseFilter() {
+      document.getElementById('minPriceInput').value = '';
+      document.getElementById('maxPriceInput').value = '';
+      renderCourses();
+    }
+
+    function openCourseModal(mode) {
+      editMode = mode;
+      const modal = document.getElementById('modalCourse');
+      if (mode === 'add') {
+        document.getElementById('modalCourseTitle').textContent = 'Thêm Khóa Học Mới';
+        document.getElementById('fCourseTitle').value = '';
+        document.getElementById('fCourseDesc').value = '';
+        document.getElementById('fCourseDuration').value = '';
+        document.getElementById('fCoursePrice').value = '';
+      } else {
+        if (!selectedCourseId) {
+          toast('Vui lòng chọn 1 khóa học từ bảng để sửa!', 'warn');
+          return;
+        }
+        const c = courses.find(x => x.id === selectedCourseId);
+        document.getElementById('modalCourseTitle').textContent = 'Sửa Khóa Học #' + c.id;
+        document.getElementById('fCourseTitle').value = c.title;
+        document.getElementById('fCourseDesc').value = c.description;
+        document.getElementById('fCourseDuration').value = c.duration;
+        document.getElementById('fCoursePrice').value = c.price;
+      }
+      modal.classList.add('open');
+    }
+
+    function saveCourse() {
+      const title = document.getElementById('fCourseTitle').value.trim();
+      const desc = document.getElementById('fCourseDesc').value.trim();
+      const duration = parseInt(document.getElementById('fCourseDuration').value) || 0;
+      const price = parseFloat(document.getElementById('fCoursePrice').value) || 0;
+
+      if (editMode === 'add') {
+        const newId = courses.length ? Math.max(...courses.map(x => x.id)) + 1 : 1;
+        courses.push({ id: newId, title, description: desc, duration, price });
+        toast('Thêm khóa học thành công!', 'ok');
+      } else {
+        const item = courses.find(x => x.id === selectedCourseId);
+        if (item) {
+          item.title = title;
+          item.description = desc;
+          item.duration = duration;
+          item.price = price;
+          toast('Cập nhật khóa học thành công!', 'ok');
+        }
+      }
+
+      closeModal('modalCourse');
+      renderCourses();
+    }
+
+    function deleteCourse() {
+      if (!selectedCourseId) {
+        toast('Vui lòng chọn khóa học để xóa!', 'warn');
+        return;
+      }
+      if (currentUser.role !== 'ROLE_ADMIN') {
+        toast('Lỗi 403 Forbidden: Chỉ Quản trị viên mới có quyền xóa khóa học!', 'err');
+        return;
+      }
+      courses = courses.filter(x => x.id !== selectedCourseId);
+      selectedCourseId = null;
+      renderCourses();
+      toast('Đã xóa khóa học thành công!', 'ok');
+    }
+
+    /* ---------- LỚP HỌC ---------- */
+    function renderClasses() {
+      const tbody = document.getElementById('classTableBody');
+      document.getElementById('countClasses').textContent = classesList.length;
+      tbody.innerHTML = classesList.map((cl, i) => `
+        <tr>
+          <td class="center">${i + 1}</td>
+          <td><strong>${cl.classCode}</strong></td>
+          <td>${cl.className}</td>
+          <td><span class="badge" style="background:#e0e7ff;color:#3730a3;">${cl.room}</span></td>
+          <td>${cl.description}</td>
+          <td>${cl.deptName}</td>
+        </tr>
+      `).join('');
+    }
+
+    function handleClassSearch() {
+      const q = document.getElementById('classSearchInput').value.trim().toLowerCase();
+      const filtered = classesList.filter(c => c.classCode.toLowerCase().includes(q) || c.className.toLowerCase().includes(q));
+      const tbody = document.getElementById('classTableBody');
+      tbody.innerHTML = filtered.map((cl, i) => `
+        <tr>
+          <td class="center">${i + 1}</td>
+          <td><strong>${cl.classCode}</strong></td>
+          <td>${cl.className}</td>
+          <td><span class="badge" style="background:#e0e7ff;color:#3730a3;">${cl.room}</span></td>
+          <td>${cl.description}</td>
+          <td>${cl.deptName}</td>
+        </tr>
+      `).join('');
+    }
+
+    function filterClassByDate() {
+      // JPQL Date filter bug
+      const tbody = document.getElementById('classTableBody');
+      tbody.innerHTML = `<tr><td colspan="6" class="center" style="padding:24px;color:#94a3b8;">Không tìm thấy lớp học phù hợp với ngày đã chọn</td></tr>`;
+      toast('Không có dữ liệu lớp học phù hợp.', 'warn');
+    }
+
+    /* ---------- KHOA / VIỆN ---------- */
+    function renderDepartments() {
+      const tbody = document.getElementById('deptTableBody');
+      document.getElementById('countDepartments').textContent = departments.length;
+      tbody.innerHTML = departments.map((d, i) => `
+        <tr>
+          <td class="center">${i + 1}</td>
+          <td>${d.id}</td>
+          <td><code>${d.deptCode}</code></td>
+          <td><strong>${d.name}</strong></td>
+          <td>${d.desc}</td>
+        </tr>
+      `).join('');
+    }
+
+    /* ---------- TÀI LIỆU MINIO ---------- */
+    function renderDocuments() {
+      const tbody = document.getElementById('documentTableBody');
+      document.getElementById('countDocuments').textContent = documents.length;
+      tbody.innerHTML = documents.map((doc, i) => {
+        return `
+          <tr>
+            <td class="center">${i + 1}</td>
+            <td><strong>${doc.name}</strong></td>
+            <td><span class="badge badge-role">${doc.type}</span></td>
+            <td>${doc.size}</td>
+            <td>${doc.bucket}</td>
+            <td class="center">${doc.ver}</td>
+            <td class="center">
+              <button class="btn btn-outline btn-sm" onclick="downloadFile(${doc.id})">📥 Tải về</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function handleFileUpload() {
+      const fileInput = document.getElementById('fileUploadInput');
+      if (!fileInput.files.length) {
+        toast('Vui lòng chọn một tệp trước khi tải lên!', 'warn');
+        return;
+      }
+      const file = fileInput.files[0];
+      documents.unshift({
+        id: documents.length + 1,
+        name: file.name,
+        type: file.type || 'application/octet-stream',
+        size: (file.size / (1024 * 1024)).toFixed(2) + ' MB',
+        bucket: 'documents',
+        ver: 1.0
+      });
+      renderDocuments();
+      fileInput.value = '';
+      toast(`Đã tải lên tệp [${file.name}] thành công!`, 'ok');
+    }
+
+    function downloadFile(id) {
+      const doc = documents.find(d => d.id === id);
+      if (doc && doc.isMissing) {
+        toast('HTTP 500 Internal Server Error: io.minio.errors.ErrorResponseException: Object does not exist', 'err');
+      } else {
+        toast(`Đang tải xuống tài liệu #${id}...`, 'ok');
+      }
+    }
+
+    /* ---------- QUẢN TRỊ NGƯỜI DÙNG ---------- */
+    function renderUsers() {
+      const tbody = document.getElementById('userTableBody');
+      tbody.innerHTML = users.map((u, i) => {
+        const statusBadge = u.active
+          ? `<span class="badge badge-active">Hoạt động</span>`
+          : `<span class="badge badge-danger">Đã khóa</span>`;
+
+        const toggleBtn = u.username === 'admin'
+          ? `<span style="font-size:11px;color:#94a3b8;">Mặc định</span>`
+          : `<button class="btn btn-sm ${u.active ? 'btn-danger' : 'btn-success'}" onclick="toggleUserActive(${u.id})">
+               ${u.active ? 'Khóa tài khoản' : 'Mở khóa'}
+             </button>`;
+
+        return `
+          <tr>
+            <td class="center">${i + 1}</td>
+            <td><strong>${u.username}</strong></td>
+            <td>${u.fullName}</td>
+            <td>${u.email}</td>
+            <td><span class="badge badge-role">${u.role}</span></td>
+            <td class="center">${statusBadge}</td>
+            <td class="center">${toggleBtn}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function toggleUserActive(userId) {
+      const u = users.find(x => x.id === userId);
+      if (u) {
+        u.active = !u.active;
+        renderUsers();
+        toast(`Đã cập nhật trạng thái người dùng [${u.username}].`, 'ok');
+      }
+    }
+
+    /* ---------- ĐĂNG NHẬP ---------- */
+    function openLoginModal() {
+      document.getElementById('modalLogin').classList.add('open');
+    }
+
+    function doLogin() {
+      const u = document.getElementById('loginUsername').value.trim();
+      const p = document.getElementById('loginPassword').value.trim();
+
+      const found = users.find(x => x.username === u);
+      if (!found) {
+        toast('Tên đăng nhập hoặc mật khẩu không chính xác!', 'err');
+        return;
+      }
+
+      // BUG-001: Backend bỏ qua trạng thái active=false và vẫn đăng nhập thành công
+      currentUser = {
+        username: found.username,
+        fullName: found.fullName,
+        role: found.role
+      };
+      updateUserUI();
+      closeModal('modalLogin');
+      toast(`Đăng nhập thành công với tài khoản: ${found.username}`, 'ok');
+    }
+
+    function updateUserUI() {
+      document.getElementById('userNameDisplay').textContent = currentUser.fullName;
+      document.getElementById('userRoleDisplay').textContent = currentUser.role;
+    }
+
+    function logout() {
+      currentUser = { username: 'guest', fullName: 'Khách', role: 'ROLE_GUEST' };
+      updateUserUI();
+      toast('Đã đăng xuất.', 'ok');
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('open');
+    }
+
+    /* ---------- TOAST ---------- */
+    function toast(msg, type = 'ok') {
+      const container = document.getElementById('toastContainer');
+      const card = document.createElement('div');
+      card.className = `toast-card ${type}`;
+      card.innerHTML = `<div>${msg}</div>`;
+      container.appendChild(card);
+
+      const timeout = type === 'sql-err' ? 6000 : 3200;
+      setTimeout(() => {
+        card.style.opacity = '0';
+        card.style.transition = 'opacity 0.3s';
+        setTimeout(() => card.remove(), 300);
+      }, timeout);
+    }
+
+    /* ---------- INIT ---------- */
+    window.addEventListener('DOMContentLoaded', () => {
+      renderStudents();
+      renderCourses();
+      renderClasses();
+      renderDepartments();
+      renderDocuments();
+      renderUsers();
+      updateUserUI();
+    });
+  </script>
+</body>
+</html>
