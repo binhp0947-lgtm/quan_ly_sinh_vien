@@ -1,0 +1,9 @@
+target/
+.git/
+.mvn/
+*.exe
+*.bat
+.idea/
+.vscode/
+cloudflared.exe
+render.yaml
