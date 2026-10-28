@@ -47,9 +47,36 @@ done
 
 # 5. Khoi tao URL cong khai Cloudflare Tunnel
 echo "[5/5] Dang tao URL cong khai qua Internet cho giao vien..."
-echo "=========================================================="
-echo "  URL CONG KHAI CHO GIAO VIEN SE HIEN O BEN DUOI (https://...trycloudflare.com)"
-echo "  Nhan Ctrl+C neu muon dung lai."
-echo "=========================================================="
+pkill -f "cloudflared" || true
+rm -f tunnel.log
 
-./cloudflared tunnel --url http://localhost:8080
+nohup ./cloudflared tunnel --url http://localhost:8080 > tunnel.log 2>&1 &
+
+echo "Dang lay link cong khai Cloudflare (khoang 5 giay)..."
+URL=""
+for i in {1..30}; do
+    URL=$(grep -o 'https://[-a-zA-Z0-9@:%._\+~#=]\+\.trycloudflare\.com' tunnel.log | head -n 1 || true)
+    if [ -n "$URL" ]; then
+        echo ""
+        echo "=========================================================="
+        echo "   🎉 HE THONG DA HOAT DONG VA CO LINK CONG KHAI!       "
+        echo "=========================================================="
+        echo ""
+        echo "   👉 LINK GUI GIAO VIEN: $URL"
+        echo "   👉 LINK SWAGGER DOCS:  $URL/swagger-ui/index.html"
+        echo ""
+        echo "=========================================================="
+        echo "   (He thong & MySQL dang chay tren Google Cloud Shell)"
+        echo "=========================================================="
+        break
+    fi
+    sleep 1
+done
+
+if [ -z "$URL" ]; then
+    cat tunnel.log
+fi
+
+# Giu terminal theo doi tunnel
+tail -f tunnel.log
+
