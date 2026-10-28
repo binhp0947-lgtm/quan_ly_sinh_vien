@@ -1095,9 +1095,9 @@
     ];
 
     let users = [
-      { id: 1, username: 'admin', fullName: 'Quản trị viên Hệ thống', email: 'admin@course.edu.vn', role: 'ROLE_ADMIN', active: true },
-      { id: 2, username: 'lecturer', fullName: 'TS. Nguyễn Văn Giảng', email: 'lecturer@course.edu.vn', role: 'ROLE_LECTURER', active: true },
-      { id: 3, username: 'student', fullName: 'Phú Văn Bình', email: 'binh.phu24@example.com', role: 'ROLE_STUDENT', active: true }
+      { id: 1, username: 'admin', password: 'admin123', fullName: 'Quản trị viên Hệ thống', email: 'admin@course.edu.vn', role: 'ROLE_ADMIN', active: true },
+      { id: 2, username: 'lecturer', password: 'lecturer123', fullName: 'TS. Nguyễn Văn Giảng', email: 'lecturer@course.edu.vn', role: 'ROLE_LECTURER', active: true },
+      { id: 3, username: 'student', password: 'student123', fullName: 'Phú Văn Bình', email: 'binh.phu24@example.com', role: 'ROLE_STUDENT', active: true }
     ];
 
     let selectedStudentId = null;
@@ -1521,7 +1521,7 @@
       const u = document.getElementById('loginUsername').value.trim();
       const p = document.getElementById('loginPassword').value.trim();
 
-      const found = users.find(x => x.username === u);
+      const found = users.find(x => x.username === u && x.password === p);
       if (!found) {
         toast('Tên đăng nhập hoặc mật khẩu không chính xác!', 'err');
         return;
